@@ -1,95 +1,49 @@
-name: C++ Build and Test
+name: Build
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main, master ]
   pull_request:
-    branches:
-      - main
+    branches: [ main, master ]
 
 jobs:
   build:
-
-    # Esegui il job su più sistemi operativi (Ubuntu, macOS, Windows)
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        compiler: [gcc, clang, msvc]
-        # Aggiungere più compilatori o sistemi operativi se necessario
-
-    runs-on: ${{ matrix.os }}
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      # Checkout del codice
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      # Configurazione per Ubuntu e macOS
-      - name: Set up Vcpkg
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
-          git clone https://github.com/microsoft/vcpkg.git external/vcpkg
-          ./external/vcpkg/bootstrap-vcpkg.sh
-        if: matrix.os != 'windows-latest'
-
-      # Installazione di dipendenze con Vcpkg (per tutti i sistemi operativi)
-      - name: Install dependencies with Vcpkg
-        run: |
-          ./external/vcpkg/vcpkg install <nome-della-libreria>
-        working-directory: ${{ github.workspace }}
-
-      # Setup degli strumenti per GCC e Clang (Linux/macOS)
-      - name: Set up GCC or Clang
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential
-        if: matrix.compiler == 'gcc' || matrix.compiler == 'clang'
-        shell: bash
-
-      # Setup per MSVC (Windows)
-      - name: Set up MSVC (Windows)
-        uses: actions/setup-msbuild@v1
-        if: matrix.compiler == 'msvc'
-
-      # Configurazione di Premake e Ninja
-      - name: Install Premake and Ninja
-        run: |
-          if [[ $RUNNER_OS == "Linux" ]]; then
-            sudo apt-get install -y ninja-build
-          elif [[ $RUNNER_OS == "macOS" ]]; then
-            brew install ninja
-          elif [[ $RUNNER_OS == "Windows" ]]; then
-            choco install ninja
-          fi
-          curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz -o premake.tar.gz
-          tar -xvf premake.tar.gz
+          echo "Premake5: Download manuale ultima release stabile..."
+          LATEST_URL=$(curl -s https://api.github.com/repos/premake/premake-core/releases/latest | grep "browser_download_url" | grep "linux" | cut -d '"' -f 4)
+          wget $LATEST_URL -O premake.tar.gz
+          tar -xvzf premake.tar.gz
           sudo mv premake5 /usr/local/bin/premake5
-        shell: bash
+          premake5 --version
 
-      # Genera il progetto tramite Premake
-      - name: Generate build files with Premake
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
         run: |
-          premake5 gmake2  # Usa "vs2019" su Windows se si usa MSVC
-        working-directory: ${{ github.workspace }}
+          echo "Installazione Premake5 via Winget..."
+          winget install --id=Premake.Premake --accept-source-agreements --accept-package-agreements
+          premake5 --version
 
-      # Esegui il build con Ninja
-      - name: Build the project with Ninja
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
         run: |
-          ninja
-        working-directory: ${{ github.workspace }}
+          echo "Installazione Premake5 via Brew..."
+          brew update
+          brew install premake
+          premake5 --version
 
-      # Test (opzionale)
-      - name: Run tests (opzionale)
-        run: |
-          # Esegui i tuoi test qui, se presenti
-          ./bin/Debug/MyApp --test
-        working-directory: ${{ github.workspace }}
+      - name: Configure project with Premake
+        run: premake5 ninja
 
-      # Aggiungi la cache per velocizzare i build successivi
-      - name: Cache Vcpkg dependencies
-        uses: actions/cache@v2
-        with:
-          path: external/vcpkg/installed
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
-          restore-keys: |
-            ${{ runner.os }}-vcpkg-
+      - name: Build project
+        run: ninja -C build
