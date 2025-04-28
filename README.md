@@ -2,6 +2,7 @@
 # Project Template - Premake5 + Ninja + Vcpkg
 
 A modern, cross-platform, and automated template for C++ projects.
+It only requires git installed on your system (the auto-downloaded premake does the heavy lifting executing premake5.lua before generating build files).
 
 ---
 
