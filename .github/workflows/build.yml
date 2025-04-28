@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
-          echo "Premake5: Download manuale ultima release stabile..."
+          echo "Installing Premake5 via PowerShell..."
           LATEST_URL=$(curl -s https://api.github.com/repos/premake/premake-core/releases/latest | grep "browser_download_url" | grep "linux" | cut -d '"' -f 4)
           wget $LATEST_URL -O premake.tar.gz
           tar -xvzf premake.tar.gz
@@ -30,14 +30,21 @@ jobs:
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          echo "Installazione Premake5 via Winget..."
-          winget install --id=Premake.Premake --accept-source-agreements --accept-package-agreements
+          echo "Installing Premake5 via PowerShell..."
+          $url = "https://github.com/premake/premake-core/releases/latest/download/premake5-windows-x64.zip"
+          $output = "premake5.zip"
+          Invoke-WebRequest -Uri $url -OutFile $output
+          Expand-Archive -Path $output -DestinationPath .
+          Move-Item -Path ".\premake5.exe" -Destination "C:\Program Files\Premake5\premake5.exe"
+          $env:Path += ";C:\Program Files\Premake5"
+          premake5 --version
+          [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Premake5", [System.EnvironmentVariableTarget]::Machine)
           premake5 --version
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
-          echo "Installazione Premake5 via Brew..."
+          echo "Installing Premake5 via Brew..."
           brew update
           brew install premake
           premake5 --version
