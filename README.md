@@ -2,16 +2,33 @@
 # Project Template - Premake5 + Ninja + Vcpkg
 
 A modern, cross-platform, and automated template for C++ projects.
+---
 
-It only requires git installed on your system (the auto-downloaded premake does the heavy lifting executing premake5.lua' setup routines before generating build files).
+
+## Supported Platforms
+
+- Windows with MSVC
+
+- Linux with GCC
+
+- macOS with Clang
 
 ---
 
-## 🚀 Architecture
+## Requirements
 
-- **Premake5**: Automatic generation of build files.
-- **Ninja**: Ultra-fast build system based on generated build files.
-- **Vcpkg**: Automatic C++ dependency management.
+- Git
+
+- Premake
+
+---
+
+## 🛠️ Main Commands
+
+| Command            | Description |
+|:-------------------|:-----------|
+| `premake5 ninja`   | Generates build files for Ninja |
+| `ninja -C build`   | Builds the project |
 
 ---
 
@@ -28,21 +45,19 @@ It only requires git installed on your system (the auto-downloaded premake does 
 ├── src/
 │   └── main.cpp              # Here goes the source code
 ├── premake5.lua              # Premake5 configuration
-├── README.md                 # The file you are reading rn :)
+├── README.md                 
 └── vcpkg.json			   # C++ dependencies definition
 ```
 
 ---
 
-## 🛠️ Main Commands
+## 🚀 Architecture
 
-| Command            | Description |
-|:-------------------|:-----------|
-| `premake5 ninja`   | Generates build files for Ninja |
-| `ninja -C build`   | Builds the project |
+- **Premake5**: Automatic generation of build files.
+- **Ninja**: Ultra-fast build system based on generated build files.
+- **Vcpkg**: Automatic C++ dependency management.
 
 ---
-
 
 ## 📚 Official Sources
 - [Premake5](https://premake.github.io/)
