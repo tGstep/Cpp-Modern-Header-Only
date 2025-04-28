@@ -28,27 +28,24 @@ jobs:
 
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
+        shell: pwsh
         run: |
-          	echo "Installing Premake5 via PowerShell..."
-		$response = Invoke-RestMethod -Uri "https://api.github.com/repos/premake/premake-core/releases/latest"
-          	$url = $response.assets | Where-Object { $_.name -match "premake5-windows-x64.zip" } | Select-Object -ExpandProperty browser_download_url
+          $response = Invoke-RestMethod -Uri "https://api.github.com/repos/premake/premake-core/releases/latest"
+          $url = $response.assets | Where-Object { $_.name -match "premake5-windows-x64.zip" } | Select-Object -ExpandProperty browser_download_url
           
-          	if ($url) 
-          	{
-              Write-Host "Found Premake5 download URL: $url"
+          if ($url) {
               $output = "premake5.zip"
               Invoke-WebRequest -Uri $url -OutFile $output
               Expand-Archive -Path $output -DestinationPath .
+              New-Item -ItemType Directory -Force -Path "C:\Program Files\Premake5"
               Move-Item -Path ".\premake5.exe" -Destination "C:\Program Files\Premake5\premake5.exe"
               [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Premake5", [System.EnvironmentVariableTarget]::Machine)
               premake5 --version
-          } 
-          else 
-          {
+          } else {
               Write-Error "Premake5 Windows version not found."
               exit 1
           }
-          
+
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
