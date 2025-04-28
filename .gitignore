@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+# Premake temporary files
+.premake/
+
+# IDE-specific files (Visual Studio, etc.)
+.vscode/
+.idea/
