@@ -20,7 +20,6 @@ jobs:
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
-          echo "Installing Premake5 via PowerShell..."
           LATEST_URL=$(curl -s https://api.github.com/repos/premake/premake-core/releases/latest | grep "browser_download_url" | grep "linux" | cut -d '"' -f 4)
           wget $LATEST_URL -O premake.tar.gz
           tar -xvzf premake.tar.gz
@@ -30,21 +29,29 @@ jobs:
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          echo "Installing Premake5 via PowerShell..."
-          $url = "https://github.com/premake/premake-core/releases/latest/download/premake5-windows-x64.zip"
-          $output = "premake5.zip"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -Path $output -DestinationPath .
-          Move-Item -Path ".\premake5.exe" -Destination "C:\Program Files\Premake5\premake5.exe"
-          $env:Path += ";C:\Program Files\Premake5"
-          premake5 --version
-          [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Premake5", [System.EnvironmentVariableTarget]::Machine)
-          premake5 --version
-
+          	echo "Installing Premake5 via PowerShell..."
+		$response = Invoke-RestMethod -Uri "https://api.github.com/repos/premake/premake-core/releases/latest"
+          	$url = $response.assets | Where-Object { $_.name -match "premake5-windows-x64.zip" } | Select-Object -ExpandProperty browser_download_url
+          
+          	if ($url) 
+          	{
+              Write-Host "Found Premake5 download URL: $url"
+              $output = "premake5.zip"
+              Invoke-WebRequest -Uri $url -OutFile $output
+              Expand-Archive -Path $output -DestinationPath .
+              Move-Item -Path ".\premake5.exe" -Destination "C:\Program Files\Premake5\premake5.exe"
+              [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Premake5", [System.EnvironmentVariableTarget]::Machine)
+              premake5 --version
+          } 
+          else 
+          {
+              Write-Error "Premake5 Windows version not found."
+              exit 1
+          }
+          
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
-          echo "Installing Premake5 via Brew..."
           brew update
           brew install premake
           premake5 --version
