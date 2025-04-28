@@ -1,0 +1,53 @@
+# Build system
+build/
+bin/
+obj/
+
+# vcpkg (dipendenze esterne)
+external/vcpkg/
+external/vcpkg/downloads/
+external/vcpkg/ports/
+
+# Premake temporary files
+.premake/
+
+# IDE-specific files (Visual Studio, etc.)
+.vscode/
+.idea/
+
+# Windows thumbnail cache
+Thumbs.db
+ehthumbs.db
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows system files
+desktop.ini
+
+# Visual Studio files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# JetBrains IDE files
+.idea/
+
+# Temporary files created by editors
+*~
+*.bak
+*.swp
+
+# Windows system files for directories
+$RECYCLE.BIN/
+
+# macOS system files (should also be ignored on Windows if working cross-platform)
+.DS_Store
+
+# Backup files (some editors create these)
+*~.ncb
+*.sdf

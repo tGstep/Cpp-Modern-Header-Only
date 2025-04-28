@@ -1,0 +1,95 @@
+name: C++ Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    # Esegui il job su più sistemi operativi (Ubuntu, macOS, Windows)
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        compiler: [gcc, clang, msvc]
+        # Aggiungere più compilatori o sistemi operativi se necessario
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      # Checkout del codice
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Configurazione per Ubuntu e macOS
+      - name: Set up Vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git external/vcpkg
+          ./external/vcpkg/bootstrap-vcpkg.sh
+        if: matrix.os != 'windows-latest'
+
+      # Installazione di dipendenze con Vcpkg (per tutti i sistemi operativi)
+      - name: Install dependencies with Vcpkg
+        run: |
+          ./external/vcpkg/vcpkg install <nome-della-libreria>
+        working-directory: ${{ github.workspace }}
+
+      # Setup degli strumenti per GCC e Clang (Linux/macOS)
+      - name: Set up GCC or Clang
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+        if: matrix.compiler == 'gcc' || matrix.compiler == 'clang'
+        shell: bash
+
+      # Setup per MSVC (Windows)
+      - name: Set up MSVC (Windows)
+        uses: actions/setup-msbuild@v1
+        if: matrix.compiler == 'msvc'
+
+      # Configurazione di Premake e Ninja
+      - name: Install Premake and Ninja
+        run: |
+          if [[ $RUNNER_OS == "Linux" ]]; then
+            sudo apt-get install -y ninja-build
+          elif [[ $RUNNER_OS == "macOS" ]]; then
+            brew install ninja
+          elif [[ $RUNNER_OS == "Windows" ]]; then
+            choco install ninja
+          fi
+          curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz -o premake.tar.gz
+          tar -xvf premake.tar.gz
+          sudo mv premake5 /usr/local/bin/premake5
+        shell: bash
+
+      # Genera il progetto tramite Premake
+      - name: Generate build files with Premake
+        run: |
+          premake5 gmake2  # Usa "vs2019" su Windows se si usa MSVC
+        working-directory: ${{ github.workspace }}
+
+      # Esegui il build con Ninja
+      - name: Build the project with Ninja
+        run: |
+          ninja
+        working-directory: ${{ github.workspace }}
+
+      # Test (opzionale)
+      - name: Run tests (opzionale)
+        run: |
+          # Esegui i tuoi test qui, se presenti
+          ./bin/Debug/MyApp --test
+        working-directory: ${{ github.workspace }}
+
+      # Aggiungi la cache per velocizzare i build successivi
+      - name: Cache Vcpkg dependencies
+        uses: actions/cache@v2
+        with:
+          path: external/vcpkg/installed
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
