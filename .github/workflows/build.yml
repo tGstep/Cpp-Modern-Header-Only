@@ -31,7 +31,7 @@ jobs:
         shell: pwsh
         run: |
           $response = Invoke-RestMethod -Uri "https://api.github.com/repos/premake/premake-core/releases/latest"
-          $url = $response.assets | Where-Object { $_.name -match "premake5-windows-x64.zip" } | Select-Object -ExpandProperty browser_download_url
+          $url = $response.assets | Where-Object { $_.name -like "*windows*.zip" } | Select-Object -ExpandProperty browser_download_url
           
           if ($url) {
               $output = "premake5.zip"
