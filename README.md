@@ -1,99 +1,112 @@
-# MyProject: C++ Template con Premake, Ninja & vcpkg
 
-**MyProject** è un template C++ progettato per l'utilizzo con **Premake5**, **Ninja** e **vcpkg**. Questo template offre una configurazione moderna e scalabile per gestire progetti C++ con un flusso di lavoro ottimizzato.
+# Project Template - Premake5 + Ninja + Vcpkg
 
----
-
-## Architettura del Progetto
-
-```
-my_project/
-│
-├── src/                  # Codice sorgente (es. main.cpp)
-├── external/             # Librerie esterne (scaricate automaticamente da script)
-│   └── vcpkg/
-├── vcpkg.json            # Dipendenze C++ (gestite tramite vcpkg)
-├── premake5.lua          # Script di configurazione Premake
-└── README.md             # Documentazione
-```
+A modern, cross-platform, and automated template for C++ projects.
 
 ---
 
-## Strumenti Utilizzati
+## 🚀 Architecture
 
-| Strumento   | Descrizione                                 | Link |
-|-------------|---------------------------------------------|------|
-| **Premake5** | Generatore di file di progetto              | https://premake.github.io/ |
-| **Ninja**   | Build system rapido e scalabile             | https://ninja-build.org/  |
-| **vcpkg**   | Gestore di pacchetti C++                    | https://vcpkg.io/         |
+- **Premake5**: Automatic generation of build files (Ninja, Makefiles, VS, Xcode).
+- **Ninja**: Ultra-fast build system based on generated build files.
+- **Vcpkg**: Automatic C++ dependency management.
 
 ---
 
-## Flusso di Build
+## 🛠️ Technologies Used
 
-1. **Premake5** scarica e configura **vcpkg** automaticamente.
-2. **Premake5** esegue il bootstrap di **vcpkg** con telemetria disabilitata.
-3. **Premake5** installa le dipendenze lette da `vcpkg.json`.
-4. **Premake5** genera i file di build per **Ninja**.
-5. **Ninja** compila il progetto.
-6. **Esegui** il binario generato.
-
----
-
-## Aggiungere Nuove Dipendenze
-
-1. Modifica il file `vcpkg.json` aggiungendo il nome del pacchetto.
-2. Rigenera i file di progetto:
-
-   ```bash
-   premake5 ninja
-   ```
-
-3. Compila il progetto:
-
-   ```bash
-   ninja
-   ```
+| Tool      | Purpose | Installation |
+|:----------|:-------|:-------------|
+| Premake5  | Dynamic build generator | Automatically downloaded or installed via Winget/Brew |
+| Ninja     | Fast build system | Preinstalled on GitHub Actions |
+| Vcpkg     | C++ package management | Auto-cloned and bootstrap automatic |
 
 ---
 
-## Suggerimenti Avanzati
+## 🏗️ Automatic Setup
 
-- **Telemetria disabilitata**: ogni comando vcpkg è eseguito con `VCPKG_DISABLE_METRICS=1`.
-- **Cache intelligente**: bootstrap/install eseguiti una sola volta grazie a flag interni Lua.
-- **Triplet automatico**: determinato da `os.istarget()`; personalizzabile per triplet custom.
-- **Parallelismo in Ninja**: utilizzare `ninja -j$(nproc)` o `ninja -j %NUMBER_OF_PROCESSORS%`.
-- **Configurazioni multiple**: specificare `--config=Release` in Premake per build ottimizzate.
+1. **Vcpkg**:
+    - Auto-download from GitHub.
+    - Automatic bootstrap (`bootstrap-vcpkg.bat/.sh`) without telemetry.
+    - Installs dependencies from `vcpkg.json` file (if present).
 
----
+2. **Premake5**:
+    - Automatically installed:
+      - Linux ➔ download the latest release from GitHub.
+      - Windows ➔ installed via `winget`.
+      - macOS ➔ installed via `brew`.
 
-## Troubleshooting Avanzato
-
-| Problema                                     | Soluzione                                                                                  |
-|----------------------------------------------|--------------------------------------------------------------------------------------------|
-| vcpkg non scaricato                         | Verifica connessione/proxy; imposta `HTTP_PROXY` / `HTTPS_PROXY` se dietro firewall.      |
-| Errore durante il bootstrap                  | Esegui manualmente `bootstrap-vcpkg.sh` o `.bat` in `external/vcpkg/`.                     |
-| Dipendenze mancanti o versioni incorrette     | Controlla `vcpkg.json` e rilancia `premake5 ninja`.                                        |
-| Linker error “undefined reference”           | Aggiungi il nome esatto della libreria in `links { ... }` in `premake5.lua`.              |
-| Compilazione lenta                           | Usa `Release` e `ninja -j`; aggiungi `-O2`/`-O3` in `buildoptions` per Linux/macOS.        |
-| Aggiornamento vcpkg o pacchetti              | Esegui `git -C external/vcpkg pull` e `bootstrap-vcpkg`, poi `vcpkg upgrade --no-dry-run`. |
-| Errori di permessi su Windows                | Esegui PowerShell come Amministratore o usa prompt con privilegi elevati.                  |
+3. **Build**:
+    - Premake5 generates build files (`premake5 ninja`).
+    - Ninja performs the build (`ninja -C build`).
 
 ---
 
-## Comandi Rapidi
+## 📄 File Structure
 
-```bash
-premake5 ninja       # Genera build.ninja
-ninja                # Compila
-./bin/Debug/MyProject  # Esegue il binario
+```plaintext
+.
+├── .github/
+│   └── workflows/
+│       └── build.yml        # GitHub Actions automatic build
+├── build/                   # Build output
+├── external/
+│   └── vcpkg/                # Auto-clone of vcpkg
+├── src/
+│   └── main.cpp              # Sample source code
+├── premake5.lua              # Premake5 configuration
+├── README.md                 # This file
+└── vcpkg.json (optional)     # C++ dependency definition (optional)
 ```
 
 ---
 
-## Requisiti
+## 🛠️ Main Commands
 
-- **Git**  
-- **Ninja** (`apt install ninja-build` su Linux)  
-- **Compilatore C++17** (g++ 9+, clang++, MSVC 2019+)  
+| Command            | Description |
+|:-------------------|:-----------|
+| `premake5 ninja`   | Generates build files for Ninja |
+| `ninja -C build`   | Builds the project |
 
+---
+
+## 🧰 Debugging and Tips
+
+- **Vcpkg errors**:
+  - Verify you have Git installed.
+  - Check the presence of `vcpkg.json` file or specify dependencies manually.
+  
+- **Premake5 not found**:
+  - Ensure `premake5` is in your `PATH`.
+  - On Linux, the binary is moved to `/usr/local/bin/premake5`.
+
+- **Build failed**:
+  - Check the correct triplet setting (`x64-windows`, `x64-linux`, `x64-osx`).
+
+---
+
+## 🐛 Troubleshooting
+
+| Issue                   | Solution |
+|:------------------------|:---------|
+| Vcpkg doesn't start     | Delete the `external/vcpkg` folder and regenerate |
+| Ninja not found         | Install Ninja (`sudo apt install ninja-build` on Linux) |
+| Incorrect Premake5 version | Force re-installation from GitHub |
+| Missing libraries       | Verify the correct `vcpkg.json` is present |
+
+---
+
+## 🏆 Build Status
+
+![Build](https://github.com/your_username/your_repo_name/actions/workflows/build.yml/badge.svg)
+
+---
+
+## 📚 Official Sources
+- [Premake5 GitHub](https://github.com/premake/premake-core)
+- [Vcpkg GitHub](https://github.com/microsoft/vcpkg)
+- [Ninja Build System](https://ninja-build.org/)
+- [Winget CLI](https://learn.microsoft.com/en-us/windows/package-manager/winget/)
+- [Homebrew CLI](https://brew.sh/)
+
+---
