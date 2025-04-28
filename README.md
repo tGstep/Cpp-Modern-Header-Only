@@ -13,15 +13,6 @@ A modern, cross-platform, and automated template for C++ projects.
 
 ---
 
-## 🛠️ Technologies Used
-
-| Tool      | Purpose |
-|:----------|:-------|
-| Premake5  | Dynamic build generator |
-| Ninja     | Fast build system |
-| Vcpkg     | Package management |
----
-
 ## 📄 File Structure
 
 ```plaintext

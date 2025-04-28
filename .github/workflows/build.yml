@@ -28,23 +28,12 @@ jobs:
 
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
-        shell: pwsh
         run: |
-          $response = Invoke-RestMethod -Uri "https://api.github.com/repos/premake/premake-core/releases/latest"
-          $url = $response.assets | Where-Object { $_.name -like "*windows*.zip" } | Select-Object -ExpandProperty browser_download_url
-          
-          if ($url) {
-              $output = "premake5.zip"
-              Invoke-WebRequest -Uri $url -OutFile $output
-              Expand-Archive -Path $output -DestinationPath .
-              New-Item -ItemType Directory -Force -Path "C:\Program Files\Premake5"
-              Move-Item -Path ".\premake5.exe" -Destination "C:\Program Files\Premake5\premake5.exe"
-              [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Premake5", [System.EnvironmentVariableTarget]::Machine)
-              premake5 --version
-          } else {
-              Write-Error "Premake5 Windows version not found."
-              exit 1
-          }
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+          Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+          $env:PATH += ";$env:USERPROFILE\scoop\shims"
+          scoop install premake
+          premake5 --version
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
