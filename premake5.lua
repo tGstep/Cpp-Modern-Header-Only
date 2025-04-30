@@ -19,18 +19,18 @@ local triplet = get_triplet()
 local vcpkg_include = path.join(vcpkg_path, "installed", triplet, "include")
 local vcpkg_lib = path.join(vcpkg_path, "installed", triplet, "lib")
 
--- Workspace Configuration
 workspace "MyWorkspace"
     configurations { "Debug", "Release" }
     location "build"
     architecture "x86_64"
     startproject "MyProject"
 
--- Project Configuration
 project "MyProject"
     kind "ConsoleApp"
     language "C++"
-    targetdir "bin/%{cfg.buildcfg}"
+    targetdir "build/%{cfg.buildcfg}/bin"
+    objdir "build/%{cfg.buildcfg}/obj"
+
     files { "src/**.cpp" }
 
     includedirs { vcpkg_include }
