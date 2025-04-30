@@ -26,7 +26,7 @@ To use this project, you must have the following tools installed and available i
 
 1. **Clone this repository**  
    ```bash
-   git clone https://https://github.com/tGstep/PremakeNinjaVcpkg-ModernCpp.git
+   git clone https://github.com/tGstep/PremakeNinjaVcpkg-ModernCpp.git
    cd PremakeNinjaVcpkg-ModernCpp
    ```
 
