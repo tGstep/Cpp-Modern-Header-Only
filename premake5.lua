@@ -31,25 +31,31 @@ project "MyProject"
     targetdir "build/%{cfg.buildcfg}/bin"
     objdir "build/%{cfg.buildcfg}/obj"
 
-    files { "src/**.cpp" }
+    files { "src/**.cpp", "src/**.h", "src/**.hpp" }
 
-    includedirs { vcpkg_include }
-    libdirs { vcpkg_lib }
+
+    includedirs {
+        path.join(installedDir, "include"),
+        -- facoltativo: 
+        -- i sottodirectory di share/cmake che contengono i file *.cmake
+        path.join(installedDir, "share")
+    }
+
+
+    libdirs {
+        path.join(installedDir, "lib"),
+        path.join(installedDir, "bin")
+    }
+
 
     filter "system:windows"
-        toolset "msc"
-        buildoptions { "/std:c++17" }
+        links( os.matchfiles(path.join(installedDir, "lib", "*.lib")) )
+    filter "system:not windows"
+        links( os.matchfiles(path.join(installedDir, "lib", "*.a")) )
 
-    filter "system:linux"
-        toolset "gcc"
-        buildoptions { "-std=c++17" }
 
-    filter "system:macosx"
-        toolset "clang"
-        buildoptions { "-std=c++17" }
-
-    filter "configurations:Debug"
-        symbols "On"
-
-    filter "configurations:Release"
-        optimize "On"
+    filter "system:windows"  toolset "msc"   buildoptions { "/std:c++17" }
+    filter "system:linux"    toolset "gcc"   buildoptions { "-std=c++17" }
+    filter "system:macosx"   toolset "clang" buildoptions { "-std=c++17" }
+    filter "configurations:Debug"   symbols  "On"
+    filter "configurations:Release" optimize "On"
