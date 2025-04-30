@@ -27,11 +27,11 @@ jobs:
         shell: pwsh
         run: .\scripts\install_tools.ps1
 
-	- name: Fetch dependencies (Linux/macOS)
-	   if: runner.os != 'Windows'
+      - name: Fetch dependencies (Linux/macOS)
+        if: runner.os != 'Windows'
         shell: bash
         run: ./scripts/fetch_dependencies.sh
-	  
+
       - name: Fetch dependencies (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
