@@ -1,38 +1,74 @@
-
 # Project Template - Premake5 + Ninja + Vcpkg
 
 A modern, cross-platform, and automated template for C++ projects.
----
-
-
-## Supported Platforms
-
-- Windows with MSVC
-
-- Linux with GCC
-
-- macOS with Clang
 
 ---
 
-## Requirements
+## 📦 Requirements
 
-- Git
+To use this project, you must have the following tools installed and available in your system `PATH`:
 
-- Premake
+- **Git**
+- **Premake5**
+- **Ninja**
+- **C++17-capable compiler**
+
+### 🧠 C++17 Minimum Compiler Versions
+| Compiler | Version |
+|----------|---------|
+| GCC      | 7.0     |
+| Clang    | 5.0     |
+| MSVC     | 19.11 (Visual Studio 2017 version 15.3) |
 
 ---
 
-## 🛠️ Main Commands
+## 🧪 How to Use This Template
 
-| Command            | Description |
-|:-------------------|:-----------|
-| `premake5 ninja`   | Generates build files for Ninja |
-| `ninja -C build`   | Builds the project |
+### Step-by-Step Setup
+
+1. **Clone this repository**  
+   ```bash
+   git clone https://github.com/your-username/your-repo-name.git
+   cd your-repo-name
+   ```
+
+2. **Install required tools**  
+   From the root directory, run the platform-specific script:
+
+   - On Linux/macOS:
+     ```bash
+     ./scripts/install_tools.sh
+     ```
+   - On Windows:
+     ```powershell
+     ./scripts/install_tools.ps1
+     ```
+
+3. **Install project dependencies**  
+   This installs packages defined in `vcpkg.json`.
+
+   - On Linux/macOS:
+     ```bash
+     ./scripts/fetch_dependencies.sh
+     ```
+   - On Windows:
+     ```powershell
+     ./scripts/fetch_dependencies.ps1
+     ```
+
+4. **Generate build files**
+   ```bash
+   premake5 ninja
+   ```
+
+5. **Build the project**
+   ```bash
+   ninja -C build
+   ```
 
 ---
 
-## 📄 File Structure
+## 🗂️ File Structure
 
 ```plaintext
 .
@@ -41,27 +77,22 @@ A modern, cross-platform, and automated template for C++ projects.
 │       └── build.yml        # GitHub Actions automatic build
 ├── build/                   # Build output
 ├── external/
-│   └── vcpkg/                # Auto-cloned C++ dependencies
+│   └── vcpkg/               # Auto-cloned C++ dependencies
+├── scripts/                 # Automation scripts
+│   ├── install_tools.sh     # Install dev tools (Linux/macOS)
+│   ├── install_tools.ps1    # Install dev tools (Windows)
+│   ├── fetch_dependencies.sh  # Install vcpkg dependencies (Linux/macOS)
+│   └── fetch_dependencies.ps1 # Install vcpkg dependencies (Windows)
 ├── src/
-│   └── main.cpp              # Here goes the source code
-├── premake5.lua              # Premake5 configuration
-├── README.md                 
-└── vcpkg.json			   # C++ dependencies definition
+│   └── main.cpp             # Your source code
+├── premake5.lua             # Premake5 configuration
+├── vcpkg.json               # Dependency list
+└── README.md                # This file
 ```
 
 ---
 
-## 🚀 Architecture
-
-- **Premake5**: Automatic generation of build files.
-- **Ninja**: Ultra-fast build system based on generated build files.
-- **Vcpkg**: Automatic C++ dependency management.
-
----
-
-## 📚 Official Sources
+## 📚 Official References
 - [Premake5](https://premake.github.io/)
-- [Vcpkg](https://vcpkg.io)
 - [Ninja](https://ninja-build.org/)
-
----
+- [Vcpkg](https://vcpkg.io)
