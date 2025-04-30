@@ -20,7 +20,7 @@ jobs:
       - name: Install tools (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash
-        run: ./scripts/install_tools.sh
+        run: sudo ./scripts/install_tools.sh
 
       - name: Install tools (Windows)
         if: runner.os == 'Windows'
@@ -30,7 +30,7 @@ jobs:
       - name: Fetch dependencies (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash
-        run: ./scripts/fetch_dependencies.sh
+        run: sudo ./scripts/fetch_dependencies.sh
 
       - name: Fetch dependencies (Windows)
         if: runner.os == 'Windows'
