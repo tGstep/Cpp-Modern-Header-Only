@@ -1,3 +1,5 @@
+require "external/premake-ninja/ninja"
+
 -- Utility per ottenere il triplet corretto
 function get_triplet()
     if os.istarget("windows") then
