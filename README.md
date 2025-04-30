@@ -39,7 +39,7 @@ To use this project, you must have the following tools installed and available i
      ```
    - On Windows:
      ```powershell
-     ./scripts/install_tools.ps1
+     .\scripts\install_tools.ps1
      ```
 
 3. **Install project dependencies**  
@@ -51,7 +51,7 @@ To use this project, you must have the following tools installed and available i
      ```
    - On Windows:
      ```powershell
-     ./scripts/fetch_dependencies.ps1
+     .\scripts\fetch_dependencies.ps1
      ```
 
 4. **Generate build files**
