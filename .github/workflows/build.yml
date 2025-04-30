@@ -51,7 +51,11 @@ jobs:
         run: premake5 ninja
 
       - name: Build Debug
-        run: ninja -C build config=debug
+        run: ninja -C build
+        env:
+          config: Debug
 
       - name: Build Release
-        run: ninja -C build config=release
+        run: ninja -C build
+        env:
+          config: Release
