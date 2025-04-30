@@ -17,31 +17,51 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies (Linux)
+      - name: Install Git and compiler (Linux)
         if: runner.os == 'Linux'
         run: |
-          LATEST_URL=$(curl -s https://api.github.com/repos/premake/premake-core/releases/latest | grep "browser_download_url" | grep "linux" | cut -d '"' -f 4)
-          wget $LATEST_URL -O premake.tar.gz
-          tar -xvzf premake.tar.gz
-          sudo mv premake5 /usr/local/bin/premake5
-          premake5 --version
+          sudo apt update
+          sudo apt install git g++ -y
+          g++ --version
+          git --version
 
-      - name: Install dependencies (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-          Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
-          scoop install premake
-          premake5 --version
-
-      - name: Install dependencies (macOS)
+      - name: Install Git and compiler (macOS)
         if: runner.os == 'macOS'
         run: |
           brew update
-          brew install premake
-          premake5 --version
+          brew install git llvm
+          export CC=/opt/homebrew/opt/llvm/bin/clang
+          export CXX=/opt/homebrew/opt/llvm/bin/clang++
+          clang++ --version
+          git --version
 
-      - name: Configure project with Premake
+      - name: Install Git and compiler (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install git --yes
+          git --version
+          # MSVC is preinstalled in Windows runners
+          cl
+
+      - name: Setup tools
+        run: |
+          cd scripts
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            pwsh ./install_tools.ps1
+          else
+            bash ./install_tools.sh
+          fi
+
+      - name: Fetch dependencies
+        run: |
+          cd scripts
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            pwsh ./fetch_dependencies.ps1
+          else
+            bash ./fetch_dependencies.sh
+          fi
+
+      - name: Configure project
         run: premake5 ninja
 
       - name: Build project
