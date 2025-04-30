@@ -1,10 +1,6 @@
-#include <spdlog.h>
-#include <json.hpp>
-
-
+#include <iostream>
 
 int main()
 {
-	nlohmann::json j = {{"key", "value"}, {"number", 42}};
-	spdlog::info("Hello, {}", j.dump());
+	std::cout << "Hello";
 }
