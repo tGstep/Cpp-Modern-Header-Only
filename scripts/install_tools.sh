@@ -39,10 +39,9 @@ if ! command -v premake5 &> /dev/null; then
           | cut -d '"' -f 4
         )
         wget "$LATEST_URL" -O premake.tar.gz
-        tar -xzf premake.tar.gz
-        DIR=$(tar -tzf premake.tar.gz | head -1 | cut -f1 -d"/")
-        sudo mv "$DIR"/premake5 /usr/local/bin/premake5
-        rm -rf premake.tar.gz "$DIR"
+		tar -xzf premake.tar.gz
+		sudo mv premake5 /usr/local/bin/premake5
+		rm -f premake.tar.gz
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         brew install premake
     else
