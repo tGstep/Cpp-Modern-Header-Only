@@ -28,6 +28,10 @@ jobs:
         shell: bash
         run: ./scripts/install_tools.sh
 
+      - name: Set up MSVC environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Install tools (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
