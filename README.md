@@ -9,11 +9,9 @@ A modern, cross-platform, and automated template for C++ projects.
 To use this project, you must have the following tools installed and available in your system `PATH`:
 
 - **Git**
-- **Premake5**
-- **Ninja**
-- **C++17-capable compiler**
+- **GCC on Linux, Clang on MacOS and MSVC on Windows**
 
-### 🧠 C++17 Minimum Compiler Versions
+### 🧠 Minimum Compiler Versions
 | Compiler | Version |
 |----------|---------|
 | GCC      | 7.0     |
