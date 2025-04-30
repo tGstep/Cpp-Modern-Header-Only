@@ -47,14 +47,11 @@ jobs:
         shell: pwsh
         run: .\scripts\fetch_dependencies.ps1
 
-      - name: Generate build files (Debug)
-        run: premake5 --config=Debug ninja
+      - name: Generate build files
+        run: premake5 ninja
 
       - name: Build Debug
-        run: ninja -C build/Debug
-
-      - name: Generate build files (Release)
-        run: premake5 --config=Release ninja
+        run: ninja -C build/debug
 
       - name: Build Release
-        run: ninja -C build/Release
+        run: ninja -C build/release
