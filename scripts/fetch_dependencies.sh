@@ -8,7 +8,16 @@ fi
 
 echo "Installing dependencies via vcpkg..."
 cd external/vcpkg
-./vcpkg install --triplet x64-linux
+
+# Rileva il sistema operativo
+UNAME_OUT="$(uname -s)"
+case "${UNAME_OUT}" in
+    Linux*)     TRIPLET="x64-linux";;
+    Darwin*)    TRIPLET="x64-osx";;
+    *)          echo "Unsupported OS: ${UNAME_OUT}"; exit 1;;
+esac
+
+./vcpkg install --triplet $TRIPLET
 cd ../..
 
-echo "Dependencies installed."
+echo "Dependencies installed for $TRIPLET."
