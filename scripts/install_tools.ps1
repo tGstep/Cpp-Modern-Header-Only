@@ -38,6 +38,7 @@ if (-not (Get-Command premake5 -ErrorAction SilentlyContinue))
 {
     Write-Output "Installing Premake5 via Scoop..."
     scoop install premake
+    $env:PATH += ";$env:USERPROFILE\scoop\shims"
 }
 
 # 5. Clona vcpkg
