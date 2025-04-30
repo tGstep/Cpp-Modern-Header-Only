@@ -17,52 +17,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Git and compiler (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt update
-          sudo apt install git g++ -y
-          g++ --version
-          git --version
+      - name: Install tools (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: ./scripts/install_tools.sh
 
-      - name: Install Git and compiler (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew update
-          brew install git llvm
-          export CC=/opt/homebrew/opt/llvm/bin/clang
-          export CXX=/opt/homebrew/opt/llvm/bin/clang++
-          clang++ --version
-          git --version
-
-      - name: Install Git and compiler (Windows)
+      - name: Install tools (Windows)
         if: runner.os == 'Windows'
-        run: |
-          choco install git --yes
-          git --version
-          # MSVC is preinstalled in Windows runners
-          cl
+        shell: pwsh
+        run: ./scripts/install_tools.ps1
 
-      - name: Setup tools
-        run: |
-          cd scripts
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            pwsh ./install_tools.ps1
-          else
-            bash ./install_tools.sh
-          fi
+	- name: Fetch dependencies (Linux/macOS)
+	   if: runner.os != 'Windows'
+        shell: bash
+        run: ./scripts/fetch_dependencies.sh
+	  
+      - name: Fetch dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/fetch_dependencies.ps1
 
-      - name: Fetch dependencies
-        run: |
-          cd scripts
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            pwsh ./fetch_dependencies.ps1
-          else
-            bash ./fetch_dependencies.sh
-          fi
-
-      - name: Configure project
+      - name: Generate build files
         run: premake5 ninja
 
-      - name: Build project
+      - name: Build
         run: ninja -C build
