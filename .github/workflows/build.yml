@@ -14,44 +14,50 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1. Install tools cross-platform
-      - name: Install tools
-        if: runner.os == 'Windows'
-        shell: pwsh
+      # ══ Linux/macOS ════════════════════════════════════════════
+      - name: Make shell scripts executable (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
-          .\scripts\install_tools.ps1 -Verbose
+          chmod +x ./scripts/install_tools.sh
+          chmod +x ./scripts/fetch_dependencies.sh
+
       - name: Install tools (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash
-        run: ./scripts/install_tools.sh --verbose
+        run: ./scripts/install_tools.sh
 
-      # 2. Ensure local bin in PATH
-      - name: Add .local/bin to PATH
-        run: echo "${{ env.HOME }}/.local/bin" >> $GITHUB_PATH
-
-      # 3. Fetch dependencies
-      - name: Fetch dependencies
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: .\scripts\fetch_dependencies.ps1
       - name: Fetch dependencies (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash
         run: ./scripts/fetch_dependencies.sh
 
-      # 4. Generate build files
-      - name: Generate build files
-        shell: bash
-        run: |
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            premake5.exe ninja
-          else
-            premake5 ninja
-          fi
+      # ══ Windows ═══════════════════════════════════════════════
+      - name: Set up MSVC (Developer Command Prompt)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
 
-      # 5. Build
+      - name: Install tools (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: .\scripts\install_tools.ps1
+
+      - name: Add .local/bin to PATH (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: echo "$env:USERPROFILE\.local\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Fetch dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: .\scripts\fetch_dependencies.ps1
+
+      # ══ Common Build Steps ═════════════════════════════════════
+      - name: Generate build files
+        run: premake5 ninja
+
       - name: Build
         run: ninja -C build
