@@ -14,9 +14,11 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ══ Linux/macOS ════════════════════════════════════════════
       - name: Make shell scripts executable (Linux/macOS)
         if: runner.os != 'Windows'
         run: |
@@ -28,6 +30,16 @@ jobs:
         shell: bash
         run: ./scripts/install_tools.sh
 
+      - name: Fetch dependencies (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: ./scripts/fetch_dependencies.sh
+
+      # ══ Windows ═══════════════════════════════════════════════
+      - name: Set up MSVC (Developer Command Prompt)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Install tools (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -38,16 +50,12 @@ jobs:
         shell: pwsh
         run: echo "$env:USERPROFILE\.local\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - name: Fetch dependencies (Linux/macOS)
-        if: runner.os != 'Windows'
-        shell: bash
-        run: ./scripts/fetch_dependencies.sh
-
       - name: Fetch dependencies (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: .\scripts\fetch_dependencies.ps1
 
+      # ══ Common Build Steps ═════════════════════════════════════
       - name: Generate build files
         run: premake5 ninja
 
