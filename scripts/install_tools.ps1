@@ -23,8 +23,8 @@ if (-not (Get-Command scoop -ErrorAction SilentlyContinue))
     Write-Output "Installing Scoop..."
     Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
     iwr -useb get.scoop.sh | iex
+    
 }
-$env:PATH += ";$env:USERPROFILE\scoop\shims"
 
 # 3. Installa Ninja
 if (-not (Get-Command ninja -ErrorAction SilentlyContinue)) 
@@ -39,6 +39,8 @@ if (-not (Get-Command premake5 -ErrorAction SilentlyContinue))
     Write-Output "Installing Premake5 via Scoop..."
     scoop install premake
 }
+
+$env:PATH += ";$env:USERPROFILE\scoop\shims"
 
 # 5. Clona vcpkg
 if (-not (Test-Path "external\vcpkg")) 
