@@ -40,7 +40,11 @@ if (-not (Get-Command premake5 -ErrorAction SilentlyContinue))
     scoop install premake
 }
 
-$env:PATH += ";$env:USERPROFILE\scoop\shims"
+if (-not (Test-Path "external\premake-ninja")) 
+{
+    Write-Output "Cloning premake-ninja module..."
+    git clone https://github.com/jimon/premake-ninja.git external\premake-ninja
+}
 
 # 5. Clona vcpkg
 if (-not (Test-Path "external\vcpkg")) 
@@ -52,11 +56,4 @@ if (-not (Test-Path "external\vcpkg"))
     Pop-Location
 }
 
-# 6. Clona premake-ninja
-if (-not (Test-Path "external\premake-ninja")) 
-{
-    Write-Output "Cloning premake-ninja module..."
-    git clone https://github.com/jimon/premake-ninja.git external\premake-ninja
-}
-
-Write-Output "All tools (Git, MSVC, Scoop, Ninja, Premake5, vcpkg, premake-ninja) installed successfully."
+Write-Output "All tools installed successfully."
