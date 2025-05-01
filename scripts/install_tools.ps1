@@ -48,6 +48,10 @@ if (-not (Test-CommandInPath "scoop")) {
 # 3. Aggiungi shims di Scoop al PATH utente
 $ScoopShims = "$env:USERPROFILE\scoop\shims"
 Add-ToUserPath -NewPath $ScoopShims
+if ($env:GITHUB_PATH) {
+    "$ScoopShims" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+}
+
 
 # 4. Installa Ninja
 if (-not (Test-CommandInPath "ninja")) {
@@ -61,6 +65,11 @@ if (-not (Test-CommandInPath "ninja")) {
 # 5. Installa Premake5
 $PremakeBin = "$env:USERPROFILE\scoop\apps\premake\current\premake5.exe"
 $LocalBin = "$env:USERPROFILE\.local\bin"
+
+if ($env:GITHUB_PATH) {
+    "$LocalBin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+}
+
 
 if (-not (Test-CommandInPath "premake5")) {
     Write-Host "Installazione di Premake5 via Scoop..." -ForegroundColor Yellow
