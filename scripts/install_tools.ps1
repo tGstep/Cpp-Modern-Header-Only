@@ -1,90 +1,100 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-Write-Output "Installing required tools..."
+# --- Funzioni di utilità ---
 
-# 1. Verifica Git e MSVC
-if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-    Write-Error "Git not found. Please install Git manually."
+function Test-CommandInPath {
+    param([string]$Command)
+    return (Get-Command $Command -ErrorAction SilentlyContinue) -ne $null
+}
+
+function Add-ToUserPath {
+    param([string]$NewPath)
+    if (-not (($env:PATH -split ";") -contains $NewPath)) {
+        Write-Host "Aggiunta di $NewPath alla PATH utente permanente..." -ForegroundColor Yellow
+        $currentPath = [Environment]::GetEnvironmentVariable("PATH", "User")
+        if (-not ($currentPath -split ";" | Where-Object { $_ -eq $NewPath })) {
+            [Environment]::SetEnvironmentVariable("PATH", "$NewPath;$currentPath", "User")
+        }
+        $env:PATH = "$NewPath;$env:PATH"
+    }
+}
+
+function Abort($Message) {
+    Write-Host "ERRORE: $Message" -ForegroundColor Red
     exit 1
 }
 
-if (-not (Get-Command cl -ErrorAction SilentlyContinue)) {
-    Write-Error "MSVC (cl.exe) compiler not found. Please install Visual Studio with C++ workloads."
-    exit 1
+# --- Inizio script ---
+
+Write-Host "== Installazione strumenti richiesti ==" -ForegroundColor Cyan
+
+# 1. Verifica Git e MSVC
+if (-not (Test-CommandInPath "git")) {
+    Abort "Git non trovato. Installalo manualmente: https://git-scm.com/downloads"
+}
+
+if (-not (Test-CommandInPath "cl")) {
+    Abort "MSVC (cl.exe) non trovato. Installa Visual Studio con workload C++."
 }
 
 # 2. Installa Scoop se mancante
-if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
-    Write-Output "Installing Scoop..."
+if (-not (Test-CommandInPath "scoop")) {
+    Write-Host "Installazione Scoop..." -ForegroundColor Yellow
     Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
     iwr -useb get.scoop.sh | iex
 }
 
-# 3. Aggiunge gli shims di Scoop alla sessione
+# 3. Aggiungi shims di Scoop al PATH utente
 $ScoopShims = "$env:USERPROFILE\scoop\shims"
-if (-not ($env:PATH -split ";" | Where-Object { $_ -eq $ScoopShims })) {
-    Write-Output "Adding Scoop shims to PATH..."
-    $env:PATH = "$ScoopShims;$env:PATH"
-}
+Add-ToUserPath -NewPath $ScoopShims
 
 # 4. Installa Ninja
-if (-not (Get-Command ninja -ErrorAction SilentlyContinue)) {
-    Write-Output "Installing Ninja via Scoop..."
+if (-not (Test-CommandInPath "ninja")) {
+    Write-Host "Installazione di Ninja via Scoop..." -ForegroundColor Yellow
     scoop install ninja
 }
-if (-not (Get-Command ninja -ErrorAction SilentlyContinue)) {
-    Write-Error "Ninja is not available on PATH after installation."
-    exit 1
+if (-not (Test-CommandInPath "ninja")) {
+    Abort "Ninja non trovato dopo l'installazione."
 }
 
 # 5. Installa Premake5
 $PremakeBin = "$env:USERPROFILE\scoop\apps\premake\current\premake5.exe"
 $LocalBin = "$env:USERPROFILE\.local\bin"
 
-if (-not (Get-Command premake5 -ErrorAction SilentlyContinue)) {
-    Write-Output "Installing Premake5 via Scoop..."
+if (-not (Test-CommandInPath "premake5")) {
+    Write-Host "Installazione di Premake5 via Scoop..." -ForegroundColor Yellow
     scoop install premake
 }
 
-# Se non disponibile nel PATH, copialo a .local/bin e aggiorna PATH
-if (-not (Get-Command premake5 -ErrorAction SilentlyContinue)) {
-    if (Test-Path $PremakeBin) {
-        Write-Output "Copying premake5.exe to $LocalBin"
-        New-Item -ItemType Directory -Force -Path $LocalBin | Out-Null
-        Copy-Item $PremakeBin "$LocalBin\premake5.exe" -Force
-        $env:PATH = "$LocalBin;$env:PATH"
+# Copia in .local/bin se necessario
+if (-not (Test-CommandInPath "premake5") -and (Test-Path $PremakeBin)) {
+    Write-Host "Copia di premake5.exe in $LocalBin" -ForegroundColor Yellow
+    New-Item -ItemType Directory -Force -Path $LocalBin | Out-Null
+    Copy-Item $PremakeBin "$LocalBin\premake5.exe" -Force
+    Add-ToUserPath -NewPath $LocalBin
 
-        if ($env:GITHUB_PATH) {
-            Add-Content -Path $env:GITHUB_PATH -Value $LocalBin
-        }
-    } else {
-        Write-Error "Premake5 binary not found after installation."
-        exit 1
+    # Se in GitHub Actions
+    if ($env:GITHUB_PATH) {
+        Add-Content -Path $env:GITHUB_PATH -Value $LocalBin
     }
+} elseif (-not (Test-CommandInPath "premake5")) {
+    Abort "Premake5 non disponibile dopo l'installazione."
 }
 
 # 6. Clona premake-ninja
 if (-not (Test-Path "external\premake-ninja")) {
-    Write-Output "Cloning premake-ninja module..."
+    Write-Host "Clonazione del modulo premake-ninja..." -ForegroundColor Yellow
     git clone https://github.com/jimon/premake-ninja.git external\premake-ninja
 }
 
-# 7. Clona vcpkg
+# 7. Clona e bootstrap vcpkg
 if (-not (Test-Path "external\vcpkg")) {
-    Write-Output "Cloning vcpkg repository..."
+    Write-Host "Clonazione di vcpkg..." -ForegroundColor Yellow
     git clone https://github.com/microsoft/vcpkg.git external\vcpkg
     Push-Location external\vcpkg
     .\bootstrap-vcpkg.bat
     Pop-Location
 }
 
-# 8. Verifica finale
-Write-Output "Verifying Premake5 installation..."
-try {
-    premake5 --version
-    Write-Output "Premake5 is correctly installed and available in PATH."
-} catch {
-    Write-Error "Premake5 installation failed: command not found or not working."
-    exit 1
-}
+Write-Host "`n== Tutti gli strumenti installati con successo. ==" -ForegroundColor Green
