@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Make shell scripts executable
+      - name: Make shell scripts executable (Linux/macOS)
         if: runner.os != 'Windows'
         run: |
           chmod +x ./scripts/install_tools.sh
@@ -28,14 +28,15 @@ jobs:
         shell: bash
         run: ./scripts/install_tools.sh
 
-      - name: Set up MSVC environment
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-
       - name: Install tools (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: .\scripts\install_tools.ps1
+
+      - name: Add .local/bin to PATH (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: echo "$env:USERPROFILE\.local\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Fetch dependencies (Linux/macOS)
         if: runner.os != 'Windows'
@@ -47,15 +48,8 @@ jobs:
         shell: pwsh
         run: .\scripts\fetch_dependencies.ps1
 
-      - name: Generate Ninja build files
+      - name: Generate build files
         run: premake5 ninja
 
-      - name: Build Debug
+      - name: Build
         run: ninja -C build
-        env:
-          config: Debug
-
-      - name: Build Release
-        run: ninja -C build
-        env:
-          config: Release
