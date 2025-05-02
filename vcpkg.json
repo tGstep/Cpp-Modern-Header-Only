@@ -1,9 +1,9 @@
 {
-  "name": "myproject",
+  "name": "Project Name",
   "version": "1.0.0",
-  "dependencies": [
-    "spdlog",
-    "nlohmann-json"
+  "dependencies": 
+  [
+
   ]
 }
 
