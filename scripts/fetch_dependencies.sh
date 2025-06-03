@@ -9,7 +9,7 @@ fi
 echo "Installing dependencies via vcpkg..."
 cd external/vcpkg
 
-# Rileva il sistema operativo
+# Get OS name
 UNAME_OUT="$(uname -s)"
 case "${UNAME_OUT}" in
     Linux*)     TRIPLET="x64-linux";;
