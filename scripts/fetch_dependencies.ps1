@@ -1,7 +1,8 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-if (-not (Test-Path "external\vcpkg")) {
+if (-not (Test-Path "external\vcpkg")) 
+{
     Write-Error "vcpkg not found. Run scripts/install_tools.ps1 first."
     exit 1
 }
