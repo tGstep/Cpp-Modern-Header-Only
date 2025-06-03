@@ -3,7 +3,7 @@ set -e
 
 echo "Installing required tools..."
 
-# 1. Verifica Git e il compilatore C++
+# 1. Check for Git and GCC
 if ! command -v git &> /dev/null; then
     echo "Error: Git is not installed."
     exit 1
@@ -14,7 +14,7 @@ if ! command -v g++ &> /dev/null && ! command -v clang++ &> /dev/null; then
     exit 1
 fi
 
-# 2. Installa Ninja se mancante
+# 2. Install Ninja if not found
 if ! command -v ninja &> /dev/null; then
     echo "Installing Ninja..."
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -28,7 +28,7 @@ if ! command -v ninja &> /dev/null; then
     fi
 fi
 
-# 3. Installa Premake5 se mancante
+# 3. Install Premake if not found
 if ! command -v premake5 &> /dev/null; then
     echo "Installing Premake5..."
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -50,7 +50,7 @@ if ! command -v premake5 &> /dev/null; then
     fi
 fi
 
-# 4. Clona vcpkg se necessario
+# 4. Clone vcpkg if needed
 if [ ! -d "external/vcpkg" ]; then
     echo "Cloning vcpkg..."
     git clone https://github.com/microsoft/vcpkg.git external/vcpkg
@@ -59,7 +59,7 @@ if [ ! -d "external/vcpkg" ]; then
     cd ../..
 fi
 
-# 5. Clona premake-ninja se necessario
+# 5. Clone premake-ninja if needed
 if [ ! -d "external/premake-ninja" ]; then
     echo "Cloning premake-ninja module..."
     git clone https://github.com/jimon/premake-ninja.git external/premake-ninja
