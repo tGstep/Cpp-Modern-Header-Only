@@ -29,11 +29,6 @@ jobs:
         shell: bash
         run: ./scripts/install_tools.sh
 
-      - name: Fetch header-only dependencies
-        if: runner.os != 'Windows'
-        shell: bash
-        run: ./scripts/fetch_dependencies.sh
-
       # ══════════════════════════════ Windows ══════════════════════════════
       - name: Set up MSVC
         if: runner.os == 'Windows'
@@ -50,11 +45,6 @@ jobs:
         run: |
           $PremakePath = "$env:USERPROFILE\.local\bin"
           echo "$PremakePath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-      - name: Fetch header-only dependencies
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: ./scripts/fetch_dependencies.ps1
 
       # ══════════════════════════════ Build (Common) ══════════════════════════════
       - name: Generate build files with premake-ninja
