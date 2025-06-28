@@ -18,47 +18,48 @@ jobs:
         uses: actions/checkout@v4
 
       # ══════════════════════════════ Linux/macOS ══════════════════════════════
-      - name: Make shell scripts executable (Linux/macOS)
+      - name: Make shell scripts executable
         if: runner.os != 'Windows'
         run: |
           chmod +x ./scripts/install_tools.sh
           chmod +x ./scripts/fetch_dependencies.sh
+          chmod +x ./scripts/search.sh
 
-      - name: Install tools (Linux/macOS)
+      - name: Install tools
         if: runner.os != 'Windows'
         shell: bash
         run: ./scripts/install_tools.sh
 
-      - name: Fetch dependencies (Linux/macOS)
+      - name: Fetch header-only dependencies
         if: runner.os != 'Windows'
         shell: bash
         run: ./scripts/fetch_dependencies.sh
 
       # ══════════════════════════════ Windows ══════════════════════════════
-      - name: Set up MSVC (Developer Command Prompt)
+      - name: Set up MSVC
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Install tools (Windows)
+      - name: Install tools
         if: runner.os == 'Windows'
         shell: pwsh
         run: ./scripts/install_tools.ps1
 
-      - name: Add premake5 path to GitHub Actions PATH (Windows)
+      - name: Add premake5 path to GitHub Actions PATH
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           $PremakePath = "$env:USERPROFILE\.local\bin"
           echo "$PremakePath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - name: Fetch dependencies (Windows)
+      - name: Fetch header-only dependencies
         if: runner.os == 'Windows'
         shell: pwsh
         run: ./scripts/fetch_dependencies.ps1
 
       # ══════════════════════════════ Build (Common) ══════════════════════════════
-      - name: Generate build files
+      - name: Generate build files with premake-ninja
         run: premake5 ninja
 
-      - name: Build project
+      - name: Build project with Ninja
         run: ninja -C build

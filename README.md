@@ -1,6 +1,8 @@
-# Project Template - Premake5 + Ninja + Vcpkg
+# Project Template - Premake5 + Ninja
 
 A modern, cross-platform, and automated template for C++ projects.
+
+Now with custom dependency management for header-only libraries via `deps.json`.
 
 ---
 
@@ -9,9 +11,14 @@ A modern, cross-platform, and automated template for C++ projects.
 To use this project, you must have the following tools installed and available in your system `PATH`:
 
 - **Git**
-- **GCC on Linux, Clang on MacOS and MSVC on Windows**
+- **Premake5**
+- **Ninja**
+- **GCC on Linux, Clang on MacOS, and MSVC on Windows**
+
+> 📝 On Windows, PowerShell is required (included by default on modern systems).
 
 ### 🧠 Minimum Compiler Versions
+
 | Compiler | Version |
 |----------|---------|
 | GCC      | 7.0     |
@@ -42,8 +49,21 @@ To use this project, you must have the following tools installed and available i
      .\scripts\install_tools.ps1
      ```
 
-3. **Install project dependencies**  
-   This installs packages defined in `vcpkg.json`.
+3. **Add dependencies**  
+   Modify the `deps.json` file to include the header-only libraries you need. Example:
+
+   ```json
+   [
+     {
+       "name": "nameof",
+       "repo": "https://github.com/Neargye/nameof",
+       "includes": "include"
+     }
+   ]
+   ```
+
+4. **Fetch dependencies**  
+   This will clone the GitHub repos into `external/`.
 
    - On Linux/macOS:
      ```bash
@@ -51,18 +71,35 @@ To use this project, you must have the following tools installed and available i
      ```
    - On Windows:
      ```powershell
-     .\scripts\fetch_dependencies.ps1
+     .\scriptsetch_dependencies.ps1
      ```
 
-4. **Generate build files**
+5. **Generate build files using Premake and Ninja**
    ```bash
    premake5 ninja
    ```
 
-5. **Build the project**
+6. **Build the project**
    ```bash
    ninja -C build
    ```
+
+---
+
+## 🔎 How to Search for Header-Only Libraries
+
+A search helper is available that scans [awesome-header-only](https://github.com/pfultz2/awesome-header-only) to find matching libraries.
+
+- On Linux/macOS:
+  ```bash
+  ./scripts/search.sh nameof
+  ```
+- On Windows:
+  ```powershell
+  .\scripts\search.ps1 nameof
+  ```
+
+You will be prompted to add the found library to `deps.json`.
 
 ---
 
@@ -72,25 +109,28 @@ To use this project, you must have the following tools installed and available i
 .
 ├── .github/
 │   └── workflows/
-│       └── build.yml        # GitHub Actions automatic build
-├── build/                   # Build output
-├── external/
-│   └── vcpkg/               # Auto-cloned C++ dependencies
-├── scripts/                 # Automation scripts
-│   ├── install_tools.sh     # Install dev tools (Linux/macOS)
-│   ├── install_tools.ps1    # Install dev tools (Windows)
-│   ├── fetch_dependencies.sh  # Install vcpkg dependencies (Linux/macOS)
-│   └── fetch_dependencies.ps1 # Install vcpkg dependencies (Windows)
+│       └── build.yml             # GitHub Actions build
+├── build/                        # Ninja build output
+├── external/                     # Cloned header-only libraries
+├── scripts/                      # Automation scripts
+│   ├── install_tools.sh          # Install premake/ninja/git (Linux/macOS)
+│   ├── install_tools.ps1         # Install premake/ninja/git (Windows)
+│   ├── fetch_dependencies.sh     # Clone from deps.json (Linux/macOS)
+│   ├── fetch_dependencies.ps1    # Clone from deps.json (Windows)
+│   ├── search.sh                 # Search helper (Linux/macOS)
+│   └── search.ps1                # Search helper (Windows)
 ├── src/
-│   └── main.cpp             # Your source code
-├── premake5.lua             # Premake5 configuration
-├── vcpkg.json               # Dependency list
-└── README.md                # This file
+│   └── main.cpp                  # Sample source
+├── deps.json                     # Dependency list
+├── premake5.lua                  # Project configuration
+├── README.md                     # This file
+└── premake-ninja/                # Cloned premake-ninja backend (must be cloned manually)
 ```
 
 ---
 
 ## 📚 Official References
+
 - [Premake5](https://premake.github.io/)
 - [Ninja](https://ninja-build.org/)
-- [Vcpkg](https://vcpkg.io)
+- [awesome-header-only](https://github.com/pfultz2/awesome-header-only)
