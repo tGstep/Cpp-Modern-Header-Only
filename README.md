@@ -1,8 +1,6 @@
-# Project Template - Premake5 + Ninja
+# Project Template - Premake5 + Ninja (Header Only Deps)
 
-A modern, cross-platform, and automated template for C++ projects.
-
-Now with custom dependency management for header-only libraries via `deps.json`.
+A modern, cross-platform, and automated template for C++ projects using only header-only dependencies.
 
 ---
 
