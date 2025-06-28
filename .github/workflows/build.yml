@@ -23,7 +23,6 @@ jobs:
         run: |
           chmod +x ./scripts/install_tools.sh
           chmod +x ./scripts/fetch_dependencies.sh
-          chmod +x ./scripts/search.sh
 
       - name: Install tools
         if: runner.os != 'Windows'

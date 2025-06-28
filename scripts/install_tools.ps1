@@ -116,18 +116,7 @@ elseif (-not (Test-CommandInPath "premake5"))
 if (-not (Test-Path "external\premake-ninja")) 
 {
     Write-Host "Cloning premake-ninja module from Github..." -ForegroundColor Yellow
-    git clone https://github.com/jimon/premake-ninja.git external\premake-ninja
-}
-
-
-# 7. Clone and bootstrap vcpkg if not already found
-if (-not (Test-Path "external\vcpkg")) 
-{
-    Write-Host "Cloning vcpkg..." -ForegroundColor Yellow
-    git clone https://github.com/microsoft/vcpkg.git external\vcpkg
-    Push-Location external\vcpkg
-    .\bootstrap-vcpkg.bat -disableMetrics
-    Pop-Location
+    git clone https://github.com/jimon/premake-ninja.git \premake-ninja
 }
 
 Write-Host "`n== All needed tools got bootstrapped successfully! ==" -ForegroundColor Green
