@@ -1,6 +1,6 @@
 # Project Template - Premake5 + Ninja (Header Only Deps)
 
-A modern, cross-platform, and automated template for C++ projects using only header-only dependencies.
+A modern and cross-platform template for C++ projects using only header-only dependencies.
 
 ---
 
@@ -9,11 +9,8 @@ A modern, cross-platform, and automated template for C++ projects using only hea
 To use this project, you must have the following tools installed and available in your system `PATH`:
 
 - **Git**
-- **Premake5**
-- **Ninja**
 - **GCC on Linux, Clang on MacOS, and MSVC on Windows**
 
-> 📝 On Windows, PowerShell is required (included by default on modern systems).
 
 ### 🧠 Minimum Compiler Versions
 
@@ -31,8 +28,8 @@ To use this project, you must have the following tools installed and available i
 
 1. **Clone this repository**  
    ```bash
-   git clone https://github.com/tGstep/PremakeNinjaVcpkg-ModernCpp.git
-   cd PremakeNinjaVcpkg-ModernCpp
+   git clone https://github.com/tGstep/Cpp-Modern-Header-Only.git
+   cd Cpp-Modern-Header-Only
    ```
 
 2. **Install required tools**  
@@ -53,8 +50,8 @@ To use this project, you must have the following tools installed and available i
    ```json
    [
      {
-       "name": "nameof",
-       "repo": "https://github.com/Neargye/nameof",
+       "name": "example_dep",
+       "repo": "https://github.com/user/example_dep",
        "includes": "include"
      }
    ]
@@ -90,14 +87,14 @@ A search helper is available that scans [awesome-header-only](https://github.com
 
 - On Linux/macOS:
   ```bash
-  ./scripts/search.sh nameof
+  ./scripts/search.sh example_dep
   ```
 - On Windows:
   ```powershell
-  .\scripts\search.ps1 nameof
+  .\scripts\search.ps1 example_dep
   ```
 
-You will be prompted to add the found library to `deps.json`.
+You will be prompted to add the found library to `deps.json` automatically.
 
 ---
 
