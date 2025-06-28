@@ -83,7 +83,7 @@ To use this project, you must have the following tools installed and available i
 
 ## 🔎 How to Search for Header-Only Libraries
 
-A search helper is available that scans [awesome-header-only](https://github.com/pfultz2/awesome-header-only) to find matching libraries.
+A search helper that find libraries is provided.
 
 - On Linux/macOS:
   ```bash
@@ -127,4 +127,4 @@ You will be prompted to add the found library to `deps.json` automatically.
 - [Premake5](https://premake.github.io/)
 - [Ninja](https://ninja-build.org/)
 - [premake-ninja](https://github.com/jimon/premake-ninja)
-- [awesome-header-only](https://github.com/pfultz2/awesome-header-only)
+- [awesome-hpp](https://github.com/p-ranav/awesome-hpp)

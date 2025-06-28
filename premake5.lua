@@ -212,7 +212,7 @@ end
 
 -- === Premake workspace and project definition ===
 
-require("premake-ninja/ninja") -- premake-ninja must be cloned manually
+require("premake-ninja/ninja")
 
 workspace "MyProject"
     configurations { "Debug", "Release" }

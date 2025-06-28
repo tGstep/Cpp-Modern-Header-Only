@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-AWESOME_MD="awesome-header-only.md"
-AWESOME_URL="https://raw.githubusercontent.com/pfultz2/awesome-header-only/master/README.md"
+AWESOME_MD="awesome-hpp.md"
+AWESOME_URL="https://raw.githubusercontent.com/p-ranav/awesome-hpp/master/README.md"
 DEPS_JSON="deps.json"
 
 # Ensure file is available
