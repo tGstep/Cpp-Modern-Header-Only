@@ -53,7 +53,7 @@ fi
 # 4. Clone premake-ninja if needed
 if [ ! -d "external/premake-ninja" ]; then
     echo "Cloning premake-ninja module..."
-    git clone https://github.com/jimon/premake-ninja.git /premake-ninja
+    git clone https://github.com/jimon/premake-ninja.git premake-ninja
 fi
 
 echo "All tools (Ninja, Premake5, premake-ninja) installed successfully."
