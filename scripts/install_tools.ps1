@@ -101,26 +101,8 @@ if (-not (Test-CommandInPath "premake5"))
 }
 
 
-# Copy in .local/bin if needed
-if (-not (Test-CommandInPath "premake5") -and (Test-Path $PremakeBin)) 
-{
-    Write-Host "Copying premake5.exe in $LocalBin" -ForegroundColor Yellow
-    New-Item -ItemType Directory -Force -Path $LocalBin | Out-Null
-    Copy-Item $PremakeBin "$LocalBin\premake5.exe" -Force
-    Add-ToUserPath -NewPath $LocalBin
 
-    if ($env:GITHUB_PATH) 
-    {
-        Add-Content -Path $env:GITHUB_PATH -Value $LocalBin
-    }
-} 
-elseif (-not (Test-CommandInPath "premake5")) 
-{
-    Abort "Premake executable not found after the install process."
-}
-
-
-# 6. Install premake-ninja module - FIXED to work from scripts/ directory
+# 6. Install premake-ninja module
 if (-not (Test-Path $PremakeNinjaDir)) 
 {
     Write-Host "Cloning premake-ninja module from Github..." -ForegroundColor Yellow
@@ -129,7 +111,7 @@ if (-not (Test-Path $PremakeNinjaDir))
     # Change to project root to run git clone
     Push-Location $ProjectRoot
     try {
-        git clone https://github.com/jimon/premake-ninja.git external\premake-ninja
+        git clone https://github.com/jimon/premake-ninja.git premake-ninja
     }
     finally {
         Pop-Location
