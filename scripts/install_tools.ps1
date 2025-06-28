@@ -34,6 +34,14 @@ function Abort($Message)
 
 Write-Host "== Installing required tools... ==" -ForegroundColor Cyan
 
+# Get project root directory (parent of scripts directory)
+$ProjectRoot = Split-Path -Parent $PSScriptRoot
+$ExternalDir = Join-Path $ProjectRoot "external"
+$PremakeNinjaDir = Join-Path $ExternalDir "premake-ninja"
+
+Write-Host "Project root: $ProjectRoot" -ForegroundColor Gray
+Write-Host "External dir: $ExternalDir" -ForegroundColor Gray
+
 # 1. Check for Git and MSVC
 if (-not (Test-CommandInPath "git")) 
 {
@@ -112,11 +120,20 @@ elseif (-not (Test-CommandInPath "premake5"))
 }
 
 
-# 6. Install premake-ninja module
-if (-not (Test-Path "external\premake-ninja")) 
+# 6. Install premake-ninja module - FIXED to work from scripts/ directory
+if (-not (Test-Path $PremakeNinjaDir)) 
 {
     Write-Host "Cloning premake-ninja module from Github..." -ForegroundColor Yellow
-    git clone https://github.com/jimon/premake-ninja.git \premake-ninja
+    New-Item -ItemType Directory -Force -Path $ExternalDir | Out-Null
+    
+    # Change to project root to run git clone
+    Push-Location $ProjectRoot
+    try {
+        git clone https://github.com/jimon/premake-ninja.git external\premake-ninja
+    }
+    finally {
+        Pop-Location
+    }
 }
 
 Write-Host "`n== All needed tools got bootstrapped successfully! ==" -ForegroundColor Green
