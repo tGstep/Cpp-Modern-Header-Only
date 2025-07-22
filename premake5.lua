@@ -1,6 +1,5 @@
 local json = {}
 
--- === Robust JSON parser (embedded, no external dependencies) ===
 
 local function skipWhitespace(s, i)
     while i <= #s and s:sub(i,i):match("%s") do
